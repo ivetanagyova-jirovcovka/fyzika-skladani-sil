@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skládání rovnoběžných sil působících na tuhé těleso</title>
+    <!-- Tailwind CSS pro moderní a responzivní design -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- MathJax pro hezké vykreslování matematických vzorců -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        /* Vlastní styly pro plynulé přechody v interaktivních prvcích */
+        svg line, svg text, svg polygon {
+            transition: all 0.2s ease-out;
+        }
+        input[type=range] {
+            accent-color: #3b82f6; /* Modrá barva pro posuvníky */
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans leading-relaxed antialiased">
+
+    <div class="max-w-4xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+        
+        <!-- Hlavička -->
+        <header class="mb-12 text-center">
+            <h1 class="text-4xl font-extrabold text-slate-900 mb-4 tracking-tight">Skládání rovnoběžných sil</h1>
+            <p class="text-xl text-slate-600">Jak se zachová tuhé těleso, když na něj působí více sil najednou?</p>
+        </header>
+
+        <!-- Úvod -->
+        <section class="bg-white rounded-2xl shadow-sm p-8 mb-10 border border-slate-200">
+            <h2 class="text-2xl font-bold text-blue-600 mb-4">Co už známe?</h2>
+            <p class="mb-4">
+                Na rozdíl od hmotného bodu musíme u <strong>tuhého tělesa</strong> (např. tyč, prkno, stůl) řešit nejen to, <em>jak velkou</em> silou působíme, ale především <em>kde</em> působíme.
+            </p>
+            <p class="mb-4">
+                Když na těleso působí více sil, snažíme se je nahradit jedinou silou, která bude mít na těleso naprosto stejný posuvný i otáčivý účinek. Této síle říkáme <strong>výslednice (\(F\))</strong>. Její působiště značíme obvykle bodem \(O\).
+            </p>
+        </section>
+
+        <!-- Sekce 1: Stejný směr -->
+        <section class="bg-white rounded-2xl shadow-sm p-8 mb-10 border border-slate-200">
+            <h2 class="text-2xl font-bold text-slate-800 mb-4 flex items-center">
+                <span class="bg-blue-100 text-blue-600 rounded-full w-8 h-8 flex items-center justify-center mr-3 text-lg">1</span>
+                Skládání sil STEJNÉHO směru
+            </h2>
+            <p class="mb-4">
+                Představte si dva lidi, kteří nesou na dlouhé tyči těžké závaží, nebo koně táhnoucí vůz. Síly působí rovnoběžně a stejným směrem.
+            </p>
+            
+            <div class="bg-blue-50 p-6 rounded-xl mb-8 border border-blue-100">
+                <ul class="list-disc list-inside space-y-2 text-slate-700">
+                    <li><strong>Velikost výslednice:</strong> Rovná se součtu obou sil. \( F = F_1 + F_2 \)</li>
+                    <li><strong>Směr výslednice:</strong> Je stejný jako směr skládaných sil.</li>
+                    <li><strong>Působiště výslednice:</strong> Leží <strong>mezi</strong> působišti obou sil, blíž k té větší síle.</li>
+                </ul>
+                <div class="mt-4 p-4 bg-white rounded border border-blue-200 text-center font-bold">
+                    Momentová věta: \( F_1 \cdot d_1 = F_2 \cdot d_2 \)
+                </div>
+            </div>
+
+            <!-- Interaktivní simulátor 1 -->
+            <div class="border-2 border-slate-200 rounded-xl overflow-hidden bg-slate-100">
+                <div class="p-4 bg-slate-200 border-b border-slate-300 font-semibold text-slate-700 flex justify-between items-center">
+                    <span>🎛️ Interaktivní model: Pohrajte si se silami!</span>
+                </div>
+                <div class="p-6">
+                    <div class="grid grid-cols-2 gap-8 mb-6">
+                        <div>
+                            <label class="block text-sm font-bold text-red-600 mb-2">Síla \(F_1\) (levá): <span id="val1-f1">50</span> N</label>
+                            <input type="range" id="sim1-f1" min="10" max="150" value="50" class="w-full">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-blue-600 mb-2">Síla \(F_2\) (pravá): <span id="val1-f2">100</span> N</label>
+                            <input type="range" id="sim1-f2" min="10" max="150" value="100" class="w-full">
+                        </div>
+                    </div>
+                    
+                    <!-- SVG Kreslící plátno -->
+                    <div class="w-full overflow-x-auto bg-white rounded-lg border border-slate-300">
+                        <svg id="svg-sim1" viewBox="0 0 800 350" class="w-full h-auto" style="min-width: 600px;">
+                            <!-- Definice hrotů šipek -->
+                            <defs>
+                                <marker id="arrowRed" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                    <path d="M 0 0 L 10 5 L 0 10 z" fill="#dc2626" />
+                                </marker>
+                                <marker id="arrowBlue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                    <path d="M 0 0 L 10 5 L 0 10 z" fill="#2563eb" />
+                                </marker>
+                                <marker id="arrowGreen" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                    <path d="M 0 0 L 10 5 L 0 10 z" fill="#16a34a" />
+                                </marker>
+                            </defs>
+
+                            <!-- Tyč -->
+                            <line x1="100" y1="100" x2="700" y2="100" stroke="#475569" stroke-width="12" stroke-linecap="round"/>
+                            
+                            <!-- Osy a kóty -->
+                            <line x1="100" y1="90" x2="100" y2="40" stroke="#94a3b8" stroke-dasharray="4"/>
+                            <line x1="700" y1="90" x2="700" y2="40" stroke="#94a3b8" stroke-dasharray="4"/>
+                            <line id="sim1-res-line" x1="500" y1="90" x2="500" y2="40" stroke="#94a3b8" stroke-dasharray="4"/>
+                            
+                            <text x="400" y="30" text-anchor="middle" fill="#64748b" font-size="14">Vzdálenost působišť \(d = 6 \text{ m}\)</text>
+                            
+                            <!-- Kóta d1 -->
+                            <path id="sim1-d1-path" d="M 100 60 L 500 60" stroke="#dc2626" stroke-width="2" marker-start="url(#arrowRed)" marker-end="url(#arrowRed)"/>
+                            <text id="sim1-d1-text" x="300" y="50" text-anchor="middle" fill="#dc2626" font-size="14" font-weight="bold">d₁ = 4.00 m</text>
+
+                            <!-- Kóta d2 -->
+                            <path id="sim1-d2-path" d="M 500 60 L 700 60" stroke="#2563eb" stroke-width="2" marker-start="url(#arrowBlue)" marker-end="url(#arrowBlue)"/>
+                            <text id="sim1-d2-text" x="600" y="50" text-anchor="middle" fill="#2563eb" font-size="14" font-weight="bold">d₂ = 2.00 m</text>
+
+                            <!-- F1 (Červená) -->
+                            <line id="sim1-arr-f1" x1="100" y1="100" x2="100" y2="150" stroke="#dc2626" stroke-width="4" marker-end="url(#arrowRed)"/>
+                            <text id="sim1-txt-f1" x="100" y="170" text-anchor="middle" fill="#dc2626" font-weight="bold">F₁ = 50 N</text>
+
+                            <!-- F2 (Modrá) -->
+                            <line id="sim1-arr-f2" x1="700" y1="100" x2="700" y2="200" stroke="#2563eb" stroke-width="4" marker-end="url(#arrowBlue)"/>
+                            <text id="sim1-txt-f2" x="700" y="220" text-anchor="middle" fill="#2563eb" font-weight="bold">F₂ = 100 N</text>
+
+                            <!-- Výslednice F (Zelená) -->
+                            <line id="sim1-arr-fres" x1="500" y1="100" x2="500" y2="250" stroke="#16a34a" stroke-width="6" marker-end="url(#arrowGreen)"/>
+                            <text id="sim1-txt-fres" x="500" y="270" text-anchor="middle" fill="#16a34a" font-weight="bold" font-size="18">Výslednice F = 150 N</text>
+                            
+                            <!-- Působiště bod O -->
+                            <circle id="sim1-point-o" cx="500" cy="100" r="6" fill="#16a34a"/>
+                            <text id="sim1-txt-o" x="515" y="90" fill="#16a34a" font-weight="bold">Bod O</text>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Sekce 2: Opačný směr -->
+        <section class="bg-white rounded-2xl shadow-sm p-8 mb-10 border border-slate-200">
+            <h2 class="text-2xl font-bold text-slate-800 mb-4 flex items-center">
+                <span class="bg-purple-100 text-purple-600 rounded-full w-8 h-8 flex items-center justify-center mr-3 text-lg">2</span>
+                Skládání sil OPAČNÉHO směru
+            </h2>
+            <p class="mb-4">
+                Co se stane, když síly působí proti sobě? Třeba když rybář drží prut – jednou rukou tlačí dolů a druhou nahoru. Tohle bývá proti intuici, protože výslednice leží <strong>vně</strong> tělesa (mimo prostor mezi silami).
+            </p>
+            
+            <div class="bg-purple-50 p-6 rounded-xl mb-8 border border-purple-100">
+                <ul class="list-disc list-inside space-y-2 text-slate-700">
+                    <li><strong>Velikost výslednice:</strong> Je dána rozdílem velikostí obou sil. \( F = |F_1 - F_2| \)</li>
+                    <li><strong>Směr výslednice:</strong> Je stejný jako směr <em>větší</em> z obou sil.</li>
+                    <li><strong>Působiště výslednice:</strong> Leží <strong>vně úsečky</strong> spojující působiště sil, vždy na straně té větší síly.</li>
+                </ul>
+            </div>
+
+            <!-- Interaktivní simulátor 2 -->
+            <div class="border-2 border-slate-200 rounded-xl overflow-hidden bg-slate-100">
+                <div class="p-4 bg-slate-200 border-b border-slate-300 font-semibold text-slate-700">
+                    <span>🎛️ Interaktivní model: Zkuste síly přetlačit</span>
+                </div>
+                <div class="p-6">
+                    <div class="grid grid-cols-2 gap-8 mb-6">
+                        <div>
+                            <label class="block text-sm font-bold text-red-600 mb-2">Síla \(F_1\) (dolů): <span id="val2-f1">120</span> N</label>
+                            <input type="range" id="sim2-f1" min="10" max="200" value="120" class="w-full">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-blue-600 mb-2">Síla \(F_2\) (nahoru): <span id="val2-f2">50</span> N</label>
+                            <input type="range" id="sim2-f2" min="10" max="200" value="50" class="w-full">
+                        </div>
+                    </div>
+                    
+                    <div id="sim2-warning" class="hidden bg-yellow-100 text-yellow-800 p-3 rounded mb-4 text-center font-bold border border-yellow-300">
+                        Pozor! Síly jsou stejně velké. Vzniká DVOJICE SIL, výslednice je nulová a těleso se pouze otáčí!
+                    </div>
+
+                    <div class="w-full overflow-x-auto bg-white rounded-lg border border-slate-300 relative">
+                        <svg id="svg-sim2" viewBox="0 0 1000 350" class="w-full h-auto" style="min-width: 800px;">
+                            
+                            <!-- Tyč (Prodloužená, aby bylo vidět působiště vně) -->
+                            <line x1="50" y1="175" x2="950" y2="175" stroke="#475569" stroke-width="8" stroke-linecap="round"/>
+                            <!-- Vyznačení úsečky mezi F1 a F2 (fyzické těleso) -->
+                            <line x1="400" y1="175" x2="600" y2="175" stroke="#1e293b" stroke-width="16" stroke-linecap="round"/>
+
+                            <!-- F1 (Červená - směřuje dolů) -->
+                            <line id="sim2-arr-f1" x1="400" y1="175" x2="400" y2="295" stroke="#dc2626" stroke-width="4" marker-end="url(#arrowRed)"/>
+                            <text id="sim2-txt-f1" x="400" y="315" text-anchor="middle" fill="#dc2626" font-weight="bold">F₁ = 120 N</text>
+
+                            <!-- F2 (Modrá - směřuje nahoru) -->
+                            <line id="sim2-arr-f2" x1="600" y1="175" x2="600" y2="125" stroke="#2563eb" stroke-width="4" marker-end="url(#arrowBlue)"/>
+                            <text id="sim2-txt-f2" x="600" y="110" text-anchor="middle" fill="#2563eb" font-weight="bold">F₂ = 50 N</text>
+
+                            <!-- Výslednice F (Zelená) -->
+                            <line id="sim2-arr-fres" x1="257" y1="175" x2="257" y2="245" stroke="#16a34a" stroke-width="6" marker-end="url(#arrowGreen)"/>
+                            <text id="sim2-txt-fres" x="257" y="265" text-anchor="middle" fill="#16a34a" font-weight="bold" font-size="16">F = 70 N</text>
+                            
+                            <!-- Působiště bod O -->
+                            <circle id="sim2-point-o" cx="257" cy="175" r="6" fill="#16a34a"/>
+                            
+                            <!-- Kóty vzdáleností -->
+                            <path id="sim2-d-path" d="M 400 330 L 600 330" stroke="#64748b" stroke-width="1" stroke-dasharray="4"/>
+                            <text x="500" y="345" text-anchor="middle" fill="#64748b" font-size="12">Mezi silami d = 2 m</text>
+                            
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Příklady z praxe -->
+        <section>
+            <h2 class="text-3xl font-extrabold text-slate-800 mb-6 text-center">Fyzika v každodenním životě</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                
+                <div class="bg-white p-6 rounded-2xl shadow border border-slate-100 hover:shadow-md transition">
+                    <div class="text-3xl mb-3">🪜</div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-2">Nosení žebříku na rameni</h3>
+                    <p class="text-slate-600 text-sm">
+                        Žebřík máte na rameni, ale jeho těžší část trčí za vámi. Abyste nepřepadli dozadu, musíte rukou před sebou tlačit žebřík <strong>dolů</strong>. Vaše rameno funguje jako opěrný bod a tlačí <strong>nahoru</strong>. Jde o dvě síly opačného směru! Výslednice obou sil působí za vašimi zády v těžišti žebříku.
+                    </p>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl shadow border border-slate-100 hover:shadow-md transition">
+                    <div class="text-3xl mb-3">🐴</div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-2">Koňské spřežení a vahadlo</h3>
+                    <p class="text-slate-600 text-sm">
+                        Dva koně táhnou vůz dopředu (síly stejného směru). Co když je ale jeden kůň silnější? Kdyby byla oj uchycena uprostřed, silnější kůň by vůz stáčel. Oj vozu (působiště výslednice) se proto u vahadla posunuje mírně blíž k silnějšímu koni, aby momenty sil byly v rovnováze.
+                    </p>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl shadow border border-slate-100 hover:shadow-md transition">
+                    <div class="text-3xl mb-3">🏗️</div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-2">Věžový jeřáb</h3>
+                    <p class="text-slate-600 text-sm">
+                        Na jedné straně ramene visí zátěž (tlačí dolů), na druhé straně je obrovské betonové protizávaží (také tlačí dolů). Tyto dvě rovnoběžné síly musí mít výslednici přesně v ose ocelové věže jeřábu. Pokud by se výslednice posunula mimo věž, jeřáb by se zřítil!
+                    </p>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl shadow border border-slate-100 hover:shadow-md transition">
+                    <div class="text-3xl mb-3">⚙️</div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-2">Otáčení klíčem na kola</h3>
+                    <p class="text-slate-600 text-sm">
+                        Když použijete křížový klíč k povolení pneumatiky, tlačíte jednou rukou nahoru a druhou dolů. Vyvíjíte dvě stejně velké, ale opačné síly. Výslednice je nula (klíč neodletí), ale vytvořili jste tzv. <strong>dvojici sil</strong>, která vytvoří silný otáčivý moment.
+                    </p>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Patička -->
+        <footer class="mt-16 text-center text-slate-500 text-sm pb-8">
+            <p>Vytvořeno pro výuku fyziky na středních školách.</p>
+        </footer>
+
+    </div>
+
+    <!-- Logika simulátorů -->
+    <script>
+        // Simulátor 1: Stejný směr
+        function updateSim1() {
+            const f1 = parseFloat(document.getElementById('sim1-f1').value);
+            const f2 = parseFloat(document.getElementById('sim1-f2').value);
+            
+            document.getElementById('val1-f1').innerText = f1;
+            document.getElementById('val1-f2').innerText = f2;
+
+            const x1 = 100; // Pozice F1
+            const x2 = 700; // Pozice F2
+            const d = x2 - x1; // Vzdálenost (600px na plátně, simulujeme 6m)
+            
+            const fres = f1 + f2;
+            // Výpočet d1 (vzdálenost výslednice od F1) z momentové věty: F1*d1 = F2*(d-d1) => d1 = F2*d / (F1+F2)
+            const d1_px = (f2 * d) / fres;
+            const x_res = x1 + d1_px;
+
+            // Vykreslení F1
+            const arrF1 = document.getElementById('sim1-arr-f1');
+            arrF1.setAttribute('y2', 100 + f1);
+            document.getElementById('sim1-txt-f1').setAttribute('y', 100 + f1 + 20);
+            document.getElementById('sim1-txt-f1').textContent = `F₁ = ${f1} N`;
+
+            // Vykreslení F2
+            const arrF2 = document.getElementById('sim1-arr-f2');
+            arrF2.setAttribute('y2', 100 + f2);
+            document.getElementById('sim1-txt-f2').setAttribute('y', 100 + f2 + 20);
+            document.getElementById('sim1-txt-f2').textContent = `F₂ = ${f2} N`;
+
+            // Vykreslení Fres
+            const arrFres = document.getElementById('sim1-arr-fres');
+            arrFres.setAttribute('x1', x_res);
+            arrFres.setAttribute('x2', x_res);
+            arrFres.setAttribute('y2', 100 + fres);
+            document.getElementById('sim1-txt-fres').setAttribute('x', x_res);
+            document.getElementById('sim1-txt-fres').setAttribute('y', 100 + fres + 25);
+            document.getElementById('sim1-txt-fres').textContent = `Výslednice F = ${fres} N`;
+
+            // Působiště a osy
+            document.getElementById('sim1-point-o').setAttribute('cx', x_res);
+            document.getElementById('sim1-txt-o').setAttribute('x', x_res + 15);
+            document.getElementById('sim1-res-line').setAttribute('x1', x_res);
+            document.getElementById('sim1-res-line').setAttribute('x2', x_res);
+
+            // Kóty (d1, d2)
+            // Metry (poměrně: 600px = 6m -> 100px = 1m)
+            const d1_m = (d1_px / 100).toFixed(2);
+            const d2_m = ((d - d1_px) / 100).toFixed(2);
+
+            document.getElementById('sim1-d1-path').setAttribute('d', `M ${x1} 60 L ${x_res} 60`);
+            document.getElementById('sim1-d1-text').setAttribute('x', x1 + (d1_px / 2));
+            document.getElementById('sim1-d1-text').textContent = `d₁ = ${d1_m} m`;
+
+            document.getElementById('sim1-d2-path').setAttribute('d', `M ${x_res} 60 L ${x2} 60`);
+            document.getElementById('sim1-d2-text').setAttribute('x', x_res + ((d - d1_px) / 2));
+            document.getElementById('sim1-d2-text').textContent = `d₂ = ${d2_m} m`;
+        }
+
+        // Simulátor 2: Opačný směr
+        function updateSim2() {
+            const f1 = parseFloat(document.getElementById('sim2-f1').value);
+            const f2 = parseFloat(document.getElementById('sim2-f2').value);
+            
+            document.getElementById('val2-f1').innerText = f1;
+            document.getElementById('val2-f2').innerText = f2;
+
+            const x1 = 400; // Pozice F1
+            const x2 = 600; // Pozice F2
+            const d = x2 - x1; // Vzdálenost (200px = 2m)
+            const y_base = 175;
+
+            // Aktualizace textů a délek sil F1 a F2
+            const arrF1 = document.getElementById('sim2-arr-f1');
+            arrF1.setAttribute('y2', y_base + f1);
+            document.getElementById('sim2-txt-f1').setAttribute('y', y_base + f1 + 20);
+            document.getElementById('sim2-txt-f1').textContent = `F₁ = ${f1} N`;
+
+            const arrF2 = document.getElementById('sim2-arr-f2');
+            arrF2.setAttribute('y2', y_base - f2);
+            document.getElementById('sim2-txt-f2').setAttribute('y', y_base - f2 - 15);
+            document.getElementById('sim2-txt-f2').textContent = `F₂ = ${f2} N`;
+
+            const warningEl = document.getElementById('sim2-warning');
+            const arrFres = document.getElementById('sim2-arr-fres');
+            const txtFres = document.getElementById('sim2-txt-fres');
+            const pointO = document.getElementById('sim2-point-o');
+
+            if (f1 === f2) {
+                // Dvojice sil
+                warningEl.classList.remove('hidden');
+                arrFres.setAttribute('opacity', '0');
+                txtFres.setAttribute('opacity', '0');
+                pointO.setAttribute('opacity', '0');
+            } else {
+                warningEl.classList.add('hidden');
+                arrFres.setAttribute('opacity', '1');
+                txtFres.setAttribute('opacity', '1');
+                pointO.setAttribute('opacity', '1');
+
+                const fres = Math.abs(f1 - f2);
+                let x_res;
+                let isDown = false;
+
+                if (f1 > f2) {
+                    // Výslednice směřuje dolů, je nalevo od F1
+                    // F1*x = F2*(x+d) => x*(F1-F2) = F2*d => x = F2*d / Fres
+                    const dist_px = (f2 * d) / fres;
+                    x_res = x1 - dist_px;
+                    isDown = true;
+                } else {
+                    // Výslednice směřuje nahoru, je napravo od F2
+                    // F2*x = F1*(x+d) => x = F1*d / Fres
+                    const dist_px = (f1 * d) / fres;
+                    x_res = x2 + dist_px;
+                    isDown = false;
+                }
+
+                // Bezpečnostní oříznutí, aby šipka nevyletěla z obrazovky, když se blíží limitu k nekonečnu
+                if (x_res < 50) x_res = 50;
+                if (x_res > 950) x_res = 950;
+
+                arrFres.setAttribute('x1', x_res);
+                arrFres.setAttribute('x2', x_res);
+                
+                // Nastavení hrotu podle směru
+                if (isDown) {
+                    arrFres.setAttribute('y1', y_base);
+                    arrFres.setAttribute('y2', y_base + fres);
+                    arrFres.setAttribute('marker-start', '');
+                    arrFres.setAttribute('marker-end', 'url(#arrowGreen)');
+                    txtFres.setAttribute('y', y_base + fres + 20);
+                } else {
+                    arrFres.setAttribute('y1', y_base);
+                    arrFres.setAttribute('y2', y_base - fres);
+                    // Prohození markeru, aby šipka směřovala nahoru (marker je defaultně pro tah z bodu A do B)
+                    arrFres.setAttribute('marker-start', '');
+                    arrFres.setAttribute('marker-end', 'url(#arrowGreen)');
+                    txtFres.setAttribute('y', y_base - fres - 15);
+                }
+
+                txtFres.setAttribute('x', x_res);
+                txtFres.textContent = `F = ${fres.toFixed(0)} N`;
+                
+                pointO.setAttribute('cx', x_res);
+            }
+        }
+
+        // Posluchače událostí
+        document.getElementById('sim1-f1').addEventListener('input', updateSim1);
+        document.getElementById('sim1-f2').addEventListener('input', updateSim1);
+        
+        document.getElementById('sim2-f1').addEventListener('input', updateSim2);
+        document.getElementById('sim2-f2').addEventListener('input', updateSim2);
+
+        // Počáteční vykreslení
+        window.addEventListener('DOMContentLoaded', () => {
+            updateSim1();
+            updateSim2();
+        });
+
+    </script>
+</body>
+</html>
